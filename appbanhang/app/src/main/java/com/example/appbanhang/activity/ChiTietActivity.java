@@ -3,10 +3,12 @@ package com.example.appbanhang.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,7 +37,7 @@ public class ChiTietActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chi_tiet);
         initView();
-//        ActionToolBar();
+        ActionToolBar();
         initData();
         initControl();
     }
@@ -84,7 +86,11 @@ public class ChiTietActivity extends AppCompatActivity {
             gioHang.setHinhsp(sanPhamMoi.getHinhanh());
             Utils.manggiohang.add(gioHang);
         }
-        badge.setText(String.valueOf(Utils.manggiohang.size()));
+        int totalItem = 0;
+        for (int i=0; i<Utils.manggiohang.size(); i++){
+            totalItem = totalItem + Utils.manggiohang.get(i).getSoluong();
+        }
+        badge.setText(String.valueOf(totalItem));
     }
 
     private void initData() {
@@ -106,20 +112,32 @@ public class ChiTietActivity extends AppCompatActivity {
         btnthem = findViewById(R.id.btnthemvaogiohang);
         spinner = findViewById(R.id.spinner);
         imghinhanh = findViewById(R.id.imgchitiet);
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toobar);
         badge = findViewById(R.id.menu_sl);
+        FrameLayout frameLayoutgiohang = findViewById(R.id.framegiohang);
+        frameLayoutgiohang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent giohang = new Intent(getApplicationContext(), GioHangActivity.class);
+                startActivity(giohang);
+            }
+        });
         if (Utils.manggiohang != null){
-            badge.setText(String.valueOf(Utils.manggiohang.size()));
+            int totalItem = 0;
+            for (int i=0; i<Utils.manggiohang.size(); i++){
+                totalItem = totalItem + Utils.manggiohang.get(i).getSoluong();
+            }
+            badge.setText(String.valueOf(totalItem));
         }
     }
-//    private void ActionToolBar() {
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                finish();
-//            }
-//        });
-//    }
+    private void ActionToolBar() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        }
 }

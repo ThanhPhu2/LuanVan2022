@@ -17,10 +17,10 @@
         android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toobar"
         app:layout_constraintTop_toTopOf="parent"
-        android:title="Gio hang"
+        app:title="GioHang"
         android:background="#36DD07"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"/>
