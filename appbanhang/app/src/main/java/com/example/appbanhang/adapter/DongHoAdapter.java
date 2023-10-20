@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.appbanhang.Interface.ItemClickListener;
 import com.example.appbanhang.R;
 import com.example.appbanhang.activity.ChiTietActivity;
-import com.example.appbanhang.model.SanPhamMoi;
+import com.example.appbanhang.Interface.model.SanPhamMoi;
 
 import java.text.DecimalFormat;
 import java.util.List;

@@ -12,7 +12,7 @@
         android:textStyle="bold"
         android:visibility="gone"
         android:id="@+id/txtgiohangtrong"
-        android:text="Gio hang trong"
+        android:text="Giỏ hàng trống"
         android:gravity="center"
         android:textSize="18sp"
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toobar"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="GioHang"
+        app:title="Giỏ Hàng"
         android:background="#36DD07"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"/>

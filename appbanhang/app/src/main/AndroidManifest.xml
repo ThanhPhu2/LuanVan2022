@@ -17,6 +17,32 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.SplashActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.SearchActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.XemDonActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.ThanhToanActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.DangNhapActivity"
+            android:exported="true">
+
+        </activity>
+        <activity
+            android:name=".activity.DangKiActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.GioHangActivity"
             android:exported="true" />
         <activity
@@ -35,13 +61,7 @@
             android:name=".activity.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AppBanHang.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.AppBanHang.NoActionBar" />
     </application>
 
 </manifest>

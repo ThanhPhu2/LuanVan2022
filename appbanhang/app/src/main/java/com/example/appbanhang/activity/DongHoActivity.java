@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.example.appbanhang.R;
 import com.example.appbanhang.adapter.DongHoAdapter;
-import com.example.appbanhang.model.SanPhamMoi;
+import com.example.appbanhang.Interface.model.SanPhamMoi;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
 import com.example.appbanhang.utils.Utils;
@@ -124,10 +124,20 @@ public class DongHoActivity extends AppCompatActivity {
                 finish();
             }
         });
+        if (loai == 2) {
+            getSupportActionBar().setTitle("Mắt Kính");
+        } else { if (loai == 3) {
+            getSupportActionBar().setTitle("Mắt Kính Trẻ Em");
+        } else {
+            getSupportActionBar().setTitle("Đồng Hồ");
+        }
+
+        }
     }
 
+
     private void AnhXa() {
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toobar);
         recyclerView = findViewById(R.id.recyclerview_dt);
         linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(linearLayoutManager);

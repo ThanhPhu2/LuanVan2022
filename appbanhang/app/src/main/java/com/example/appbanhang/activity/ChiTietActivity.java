@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.appbanhang.R;
-import com.example.appbanhang.model.GioHang;
-import com.example.appbanhang.model.SanPhamMoi;
+import com.example.appbanhang.Interface.model.GioHang;
+import com.example.appbanhang.Interface.model.SanPhamMoi;
 import com.example.appbanhang.utils.Utils;
 import com.nex3z.notificationbadge.NotificationBadge;
 
@@ -139,5 +139,17 @@ public class ChiTietActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Utils.manggiohang != null){
+            int totalItem = 0;
+            for (int i=0; i<Utils.manggiohang.size(); i++){
+                totalItem = totalItem + Utils.manggiohang.get(i).getSoluong();
+            }
+            badge.setText(String.valueOf(totalItem));
         }
+    }
 }

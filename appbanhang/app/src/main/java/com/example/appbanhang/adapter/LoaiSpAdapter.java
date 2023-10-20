@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.appbanhang.R;
-import com.example.appbanhang.model.LoaiSp;
+import com.example.appbanhang.Interface.model.LoaiSp;
 
 import java.util.List;
 

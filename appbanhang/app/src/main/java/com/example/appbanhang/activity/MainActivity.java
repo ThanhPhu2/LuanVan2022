@@ -10,8 +10,9 @@ import com.bumptech.glide.Glide;
 import com.example.appbanhang.R;
 import com.example.appbanhang.adapter.LoaiSpAdapter;
 import com.example.appbanhang.adapter.SanPhamMoiAdapter;
-import com.example.appbanhang.model.LoaiSp;
-import com.example.appbanhang.model.SanPhamMoi;
+import com.example.appbanhang.Interface.model.LoaiSp;
+import com.example.appbanhang.Interface.model.SanPhamMoi;
+import com.example.appbanhang.Interface.model.User;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
 import com.example.appbanhang.utils.Utils;
@@ -40,6 +41,7 @@ import android.widget.ViewFlipper;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.paperdb.Paper;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     SanPhamMoiAdapter spAdapter;
     NotificationBadge badge;
     FrameLayout frameLayout;
+    ImageView imgsearch;
 
 
     @Override
@@ -67,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
+        Paper.init(this);
+        if (Paper.book().read("user") != null){
+            User user = Paper.book().read("user");
+            Utils.user_current = user;
+        }
         Anhxa();
         ActionBar();
         ActionViewFlipper();
@@ -104,6 +112,17 @@ public class MainActivity extends AppCompatActivity {
                         matkinhtreem.putExtra("loai", 3);
                         startActivity(matkinhtreem);
                         break;
+                    case 6:
+                        Intent donhang = new Intent(getApplicationContext(), XemDonActivity.class);
+                        startActivity(donhang);
+                        break;
+                    case 7:
+                        Paper.book().delete("user");
+                        Intent dangnhap = new Intent(getApplicationContext(), DangNhapActivity.class);
+                        startActivity(dangnhap);
+                        finish();
+                        break;
+
                 }
             }
         });
@@ -136,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         loaiSpModel -> {
                             if(loaiSpModel.isSuccess()){
                                mangloaisp = loaiSpModel.getResult();
+                               mangloaisp.add(new LoaiSp("Đăng xuất", ""));
                                loaiSpAdapter = new LoaiSpAdapter(getApplicationContext(),mangloaisp);
                                listViewManHinhChinh.setAdapter(loaiSpAdapter);
                             }
@@ -175,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void Anhxa(){
+        imgsearch = findViewById(R.id.imgsearch);
         toolbar = findViewById(R.id.toolbarmanhinhchinh);
         viewFlipper = findViewById(R.id.viewlipper);
         recyclerViewManHinhChinh = findViewById(R.id.recyclerview);
@@ -202,6 +223,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent giohang  = new Intent(getApplicationContext(), GioHangActivity.class);
                 startActivity(giohang);
+            }
+        });
+        imgsearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent timkiem = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(timkiem);
             }
         });
     }

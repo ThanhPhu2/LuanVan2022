@@ -10,4 +10,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="gi_25000">Gia: 25000d</string>
     <string name="them_vao_gio_hang">Them vao gio hang</string>
+    <string name="ng_nh_p">Đăng nhập</string>
 </resources>
