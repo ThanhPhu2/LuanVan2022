@@ -4,6 +4,7 @@ import com.example.appbanhang.Interface.model.DonHangModel;
 import com.example.appbanhang.Interface.model.LoaiSpModel;
 import com.example.appbanhang.Interface.model.SanPhamMoiModel;
 import com.example.appbanhang.Interface.model.UserModel;
+import com.example.appbanhang.adapter.MessageModel;
 
 import io.reactivex.rxjava3.core.Observable;
 import retrofit2.http.Field;
@@ -30,7 +31,8 @@ public interface ApiBanHang {
             @Field("email") String email,
             @Field("pass") String pass,
             @Field("username") String username,
-            @Field("mobile") String mobile
+            @Field("mobile") String mobile,
+            @Field("uid") String uid
 
     );
     @POST("dangnhap.php")
@@ -60,5 +62,24 @@ public interface ApiBanHang {
     @FormUrlEncoded
     Observable<SanPhamMoiModel> search(
             @Field("search") String search
+    );
+
+    @POST("gettoken.php")
+    @FormUrlEncoded
+    Observable<UserModel> gettoken(
+            @Field("status") int status
+
+    );
+    @POST("deleteorder.php")
+    @FormUrlEncoded
+    Observable<MessageModel> deleteOrder(
+            @Field("iddonhang") int id
+
+    );
+    @POST("updatetoken.php")
+    @FormUrlEncoded
+    Observable<MessageModel> updateToken(
+            @Field("id") int id,
+            @Field("token") String token
     );
 }

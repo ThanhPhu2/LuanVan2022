@@ -16,11 +16,17 @@ import com.example.appbanhang.Interface.model.User;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
 import com.example.appbanhang.utils.Utils;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.nex3z.notificationbadge.NotificationBadge;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
@@ -62,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     SanPhamMoiAdapter spAdapter;
     NotificationBadge badge;
     FrameLayout frameLayout;
-    ImageView imgsearch;
+    ImageView imgsearch, imageMess;
+
 
 
     @Override
@@ -75,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             User user = Paper.book().read("user");
             Utils.user_current = user;
         }
+        getToken();
         Anhxa();
         ActionBar();
         ActionViewFlipper();
@@ -87,7 +95,40 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "khong co internet", Toast.LENGTH_LONG).show();
         }
     }
+    private void getToken(){
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        if (!TextUtils.isEmpty(s)){
+                            compositeDisposable.add(apiBanHang.updateToken(Utils.user_current.getId(),s)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(
+                                            messageModel -> {
 
+                                            },
+                                            throwable -> {
+                                                Log.d("log", throwable.getMessage());
+                                            }
+                                    ));
+                        }
+                    }
+                });
+        compositeDisposable.add(apiBanHang.gettoken(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                   userModel -> {
+                       if (userModel.isSuccess()){
+                            Utils.ID_RECEIVED = String.valueOf(userModel.getResult().get(0).getId()) ;
+                       }
+                   },
+                        throwable -> {
+
+                        }
+                ));
+    }
     private void getEventClick() {
         listViewManHinhChinh.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -98,17 +139,17 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(trangchu);
                         break;
                     case 1:
-                        Intent dienthoai = new Intent(getApplicationContext(), DongHoActivity.class);
+                        Intent dienthoai = new Intent(getApplicationContext(), TrongKinhActivity.class);
                         dienthoai.putExtra("loai", 1);
                         startActivity(dienthoai);
                         break;
                     case 2:
-                        Intent laptop = new Intent(getApplicationContext(), DongHoActivity.class);
+                        Intent laptop = new Intent(getApplicationContext(), TrongKinhActivity.class);
                         laptop.putExtra("loai", 2);
                         startActivity(laptop);
                         break;
                     case 3:
-                        Intent matkinhtreem = new Intent(getApplicationContext(), DongHoActivity.class);
+                        Intent matkinhtreem = new Intent(getApplicationContext(), TrongKinhActivity.class);
                         matkinhtreem.putExtra("loai", 3);
                         startActivity(matkinhtreem);
                         break;
@@ -120,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                         Paper.book().delete("user");
                         Intent dangnhap = new Intent(getApplicationContext(), DangNhapActivity.class);
                         startActivity(dangnhap);
+                        FirebaseAuth.getInstance().signOut();
                         finish();
                         break;
 
@@ -167,9 +209,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void ActionViewFlipper(){
         List<String> mangquancao = new ArrayList<>();
-        mangquancao.add("http://mauweb.monamedia.net/thegioididong/wp-content/uploads/2017/12/banner-Le-hoi-phu-kien-800-300.png");
-        mangquancao.add("http://mauweb.monamedia.net/thegioididong/wp-content/uploads/2017/12/banner-HC-Tra-Gop-800-300.png");
-        mangquancao.add("http://mauweb.monamedia.net/thegioididong/wp-content/uploads/2017/12/banner-big-ky-nguyen-800-300.jpg");
+        mangquancao.add("https://datacare.vn/wp-content/uploads/2020/11/Banner-Thoi-Trang-%E2%80%93-HNTT1011202006.jpg");
+        mangquancao.add("https://th.bing.com/th/id/OIP.Efh-U1oWwzVZajAWfcCSvQHaC0?w=321&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7");
+        mangquancao.add("https://th.bing.com/th/id/OIP.NyXBQM2XYWk_V4NztiZZMAHaD4?w=337&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7");
         for (int i=0; i<mangquancao.size();i++){
             ImageView imageView = new ImageView(getApplicationContext());
             Glide.with(getApplicationContext()).load(mangquancao.get(i)).into(imageView);
@@ -195,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void Anhxa(){
+        imageMess = findViewById(R.id.image_mess);
         imgsearch = findViewById(R.id.imgsearch);
         toolbar = findViewById(R.id.toolbarmanhinhchinh);
         viewFlipper = findViewById(R.id.viewlipper);
@@ -209,6 +252,9 @@ public class MainActivity extends AppCompatActivity {
         frameLayout = findViewById(R.id.framegiohang);
         mangloaisp = new ArrayList<>();
         mangSpMoi = new ArrayList<>();
+        if (Paper.book().read("giohang") != null){
+            Utils.manggiohang = Paper.book().read("giohang");
+        }
         if (Utils.manggiohang == null){
             Utils.manggiohang = new ArrayList<>();
         }else {
@@ -230,6 +276,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent timkiem = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(timkiem);
+            }
+        });
+        imageMess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent chat = new Intent(getApplicationContext(), ChatActivity.class);
+                startActivity(chat);
             }
         });
     }

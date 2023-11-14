@@ -10,10 +10,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.appbanhang.R;
-import com.example.appbanhang.adapter.DongHoAdapter;
+import com.example.appbanhang.adapter.TrongKinhAdapter;
 import com.example.appbanhang.Interface.model.SanPhamMoi;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
@@ -30,7 +29,7 @@ public class SearchActivity extends AppCompatActivity {
     Toolbar toolbar;
     RecyclerView recyclerView;
     EditText edtsearch;
-    DongHoAdapter adapterDt;
+    TrongKinhAdapter adapterDt;
     List<SanPhamMoi> sanPhamMoiList;
     ApiBanHang apiBanHang;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -61,7 +60,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 0){
                     sanPhamMoiList.clear();
-                    adapterDt = new DongHoAdapter(getApplicationContext(), sanPhamMoiList);
+                    adapterDt = new TrongKinhAdapter(getApplicationContext(), sanPhamMoiList);
                     recyclerView.setAdapter(adapterDt);
                 }else {
                     getDataSearch(charSequence.toString());
@@ -86,12 +85,14 @@ public class SearchActivity extends AppCompatActivity {
                         sanPhamMoiModel -> {
                             if (sanPhamMoiModel.isSuccess()){
                                 sanPhamMoiList = sanPhamMoiModel.getResult();
-                                adapterDt = new DongHoAdapter(getApplicationContext(), sanPhamMoiList);
+                                adapterDt = new TrongKinhAdapter(getApplicationContext(), sanPhamMoiList);
                                 recyclerView.setAdapter(adapterDt);
                             }
                         },
                         throwable -> {
-                            Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                            sanPhamMoiList.clear();
+                            adapterDt.notifyDataSetChanged();
                         }
 
                 ));

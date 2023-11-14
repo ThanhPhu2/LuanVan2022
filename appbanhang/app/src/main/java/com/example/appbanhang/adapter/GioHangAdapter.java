@@ -26,6 +26,9 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import io.paperdb.Paper;
+import okhttp3.internal.Util;
+
 public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHolder> {
     Context context;
     List<GioHang> gioHangList;
@@ -47,18 +50,27 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
         GioHang gioHang = gioHangList.get(position);
         holder.item_giohang_tensp.setText(gioHang.getTensp());
         holder.item_giohang_soluong.setText(gioHang.getSoluong() + " ");
-        Glide.with(context).load(gioHang.getHinhsp()).into(holder.item_giohang_image);
+        if (gioHang.getHinhanh().contains("http")){
+            Glide.with(context).load(gioHang.getHinhanh()).into(holder.item_giohang_image);
+        }else {
+            String hinh = Utils.BASE_URL+"images/"+gioHang.getHinhanh();
+            Glide.with(context).load(hinh).into(holder.item_giohang_image);
+        }
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
-        holder.item_giohang_gia.setText("Giá: "+decimalFormat.format((gioHang.getGiasp())));
+        holder.item_giohang_gia.setText("Giá: "+decimalFormat.format((gioHang.getGiasp()))+"Đ");
         long gia = gioHang.getSoluong() * gioHang.getGiasp();
-        holder.item_giohang_giasp2.setText(decimalFormat.format(gia));
+        holder.item_giohang_giasp2.setText(decimalFormat.format(gia) +"Đ");
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    Utils.mangmuahang.add(gioHang);
+                    Utils.manggiohang.get(holder.getAdapterPosition()).setChecked(true);
+                    if (!Utils.mangmuahang.contains(gioHang)){
+                        Utils.mangmuahang.add(gioHang);
+                    }
                     EventBus.getDefault().postSticky(new TinhTongEvent());
                 }else {
+                    Utils.manggiohang.get(holder.getAdapterPosition()).setChecked(false);
                     for (int i=0; i<Utils.mangmuahang.size(); i++){
                         if (Utils.mangmuahang.get(i).getIdsp() == gioHang.getIdsp()){
                             Utils.mangmuahang.remove(i);
@@ -68,6 +80,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
                 }
             }
         });
+        holder.checkBox.setChecked(gioHang.isChecked());
         holder.setListener(new IImageClickListener() {
             @Override
             public void onImageClick(View view, int pos, int giatri) {
@@ -75,10 +88,9 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
                     if (gioHangList.get(pos).getSoluong() > 1){
                         int soluongmoi = gioHangList.get(pos).getSoluong()-1;
                         gioHangList.get(pos).setSoluong(soluongmoi);
-
                         holder.item_giohang_soluong.setText(gioHangList.get(pos).getSoluong() + " ");
                         long gia = gioHangList.get(pos).getSoluong() * gioHangList.get(pos).getGiasp();
-                        holder.item_giohang_giasp2.setText(decimalFormat.format(gia));
+                        holder.item_giohang_giasp2.setText(decimalFormat.format(gia)+"Đ");
                         EventBus.getDefault().postSticky(new TinhTongEvent());
                     } else if (gioHangList.get(pos).getSoluong() == 1) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
@@ -87,7 +99,9 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
                         builder.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                Utils.mangmuahang.remove(gioHang);
                                 Utils.manggiohang.remove(pos);
+                                Paper.book().write("giohang", Utils.manggiohang);
                                 notifyDataSetChanged();
                                 EventBus.getDefault().postSticky(new TinhTongEvent());
                             }
@@ -101,7 +115,7 @@ public class GioHangAdapter extends RecyclerView.Adapter<GioHangAdapter.MyViewHo
                         builder.show();
                     }
                 } else if (giatri ==2) {
-                    if (gioHangList.get(pos).getSoluong() < 11){
+                    if (gioHangList.get(pos).getSoluong() < gioHangList.get(pos).getSltonkho()){
                         int soluongmoi = gioHangList.get(pos).getSoluong()+1;
                         gioHangList.get(pos).setSoluong(soluongmoi);
                     }

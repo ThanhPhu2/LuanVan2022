@@ -38,6 +38,9 @@ public class GioHangActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gio_hang);
         initView();
         initControl();
+        if (Utils.mangmuahang != null){
+            Utils.mangmuahang.clear();
+        }
         tinhTongtien();
 
     }
@@ -48,7 +51,7 @@ public class GioHangActivity extends AppCompatActivity {
             tongtiensp = tongtiensp + (Utils.mangmuahang.get(i).getGiasp()*Utils.mangmuahang.get(i).getSoluong());
         }
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
-        tongtien.setText(decimalFormat.format(tongtiensp));
+        tongtien.setText(decimalFormat.format(tongtiensp)+" Đ");
     }
 
     private void initControl() {
@@ -74,7 +77,7 @@ public class GioHangActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ThanhToanActivity.class);
                 intent.putExtra("tong tien",tongtiensp);
-                Utils.manggiohang.clear();
+                //Utils.manggiohang.clear();
                 startActivity(intent);
             }
         });

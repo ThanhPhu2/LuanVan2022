@@ -11,6 +11,6 @@ public class MatKinhActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_laptop);
+        setContentView(R.layout.activity_kinh_ram);
     }
 }

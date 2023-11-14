@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.appbanhang.R;
-import com.example.appbanhang.adapter.DongHoAdapter;
+import com.example.appbanhang.adapter.TrongKinhAdapter;
 import com.example.appbanhang.Interface.model.SanPhamMoi;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
@@ -25,14 +25,14 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class DongHoActivity extends AppCompatActivity {
+public class TrongKinhActivity extends AppCompatActivity {
     Toolbar toolbar;
     RecyclerView recyclerView;
     ApiBanHang apiBanHang;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     int page =1;
     int loai;
-    DongHoAdapter adapterDt;
+    TrongKinhAdapter adapterDt;
     List<SanPhamMoi> sanPhamMoiList;
     LinearLayoutManager linearLayoutManager;
     Handler handler = new Handler();
@@ -44,7 +44,7 @@ public class DongHoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dien_thoai);
+        setContentView(R.layout.activity_trong_kinh);
         apiBanHang = RetrofitClient.getInstance(Utils.BASE_URL).create(ApiBanHang.class);
         loai = getIntent().getIntExtra("loai",1);
         AnhXa();
@@ -102,7 +102,7 @@ public class DongHoActivity extends AppCompatActivity {
                         sanPhamMoiModel -> {
                             if (sanPhamMoiModel.isSuccess()){
                                     sanPhamMoiList = sanPhamMoiModel.getResult();
-                                    adapterDt = new DongHoAdapter(getApplicationContext(),sanPhamMoiList);
+                                    adapterDt = new TrongKinhAdapter(getApplicationContext(),sanPhamMoiList);
                                     recyclerView.setAdapter(adapterDt);
                             }
                         },

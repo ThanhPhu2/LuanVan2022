@@ -7,9 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.example.appbanhang.Interface.ItemClickDeleteListener;
 import com.example.appbanhang.R;
 import com.example.appbanhang.adapter.DonHangAdapter;
 import com.example.appbanhang.retrofit.ApiBanHang;
@@ -42,14 +46,53 @@ public class XemDonActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         donHangModel -> {
-                            DonHangAdapter adapter = new DonHangAdapter(getApplicationContext(), donHangModel.getResult());
+                            DonHangAdapter adapter = new DonHangAdapter(getApplicationContext(), donHangModel.getResult(), new ItemClickDeleteListener() {
+                                @Override
+                                public void onClickDelete(int iddonhang) {
+                                    //showDeleteOrder();
+                                }
+                            });
                             redonhang.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                         },
                         throwable -> {
                             Toast.makeText(getApplicationContext(),"KHONG KET NOI DUOC VOI SERVER"+throwable.getMessage(),Toast.LENGTH_LONG).show();
                         }
                 ));
     }
+
+//    private void showDeleteOrder() {
+//        PopupMenu popupMenu = new PopupMenu(this,redonhang.findViewById(R.id.trangthaidon));
+//        popupMenu.inflate(R.menu.menu_delete);
+//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                if (item.getItemId() == R.id.deleteOrder){
+//                    deleteOrder(iddonhang);
+//                }
+//                return false;
+//            }
+//        });
+//        popupMenu.show();
+//    }
+    private void deleteOrder (int iddonhang){
+        compositeDisposable.add(apiBanHang.deleteOrder(iddonhang)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        messageModel -> {
+                            if (messageModel.isSuccess()){
+                                getOrder();
+                            }
+
+                        },
+                        throwable -> {
+                            Log.d("logg", throwable.getMessage());
+                        }
+                ));
+    }
+
+
     private void initToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

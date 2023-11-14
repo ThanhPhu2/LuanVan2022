@@ -1,5 +1,6 @@
 package com.example.appbanhang.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
@@ -16,6 +17,11 @@ import com.example.appbanhang.R;
 import com.example.appbanhang.retrofit.ApiBanHang;
 import com.example.appbanhang.retrofit.RetrofitClient;
 import com.example.appbanhang.utils.Utils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import io.paperdb.Paper;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -26,6 +32,8 @@ public class DangNhapActivity extends AppCompatActivity {
     TextView txtdangki;
     EditText email, pass;
     AppCompatButton btndangnhap;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser user;
     ApiBanHang apiBanHang;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     boolean isLogin = false;
@@ -59,7 +67,19 @@ public class DangNhapActivity extends AppCompatActivity {
                 }else {
                     Paper.book().write("email", str_email);
                     Paper.book().write("pass", str_email);
-                    dangNhap(str_email,str_pass);
+                    if (user != null){
+                        dangNhap(str_email,str_pass);
+                    }else {
+                        firebaseAuth.signInWithEmailAndPassword(str_email,str_pass)
+                                .addOnCompleteListener(DangNhapActivity.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()){
+                                            dangNhap(str_email,str_pass);
+                                        }
+                                    }
+                                });
+                    }
                 }
             }
         });
@@ -72,6 +92,8 @@ public class DangNhapActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         pass = findViewById(R.id.pass);
         btndangnhap = findViewById(R.id.btndangnhap);
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
         if (Paper.book().read("email") != null && Paper.book().read("pass") != null){
             email.setText(Paper.book().read("email"));
             pass.setText(Paper.book().read("pass"));
